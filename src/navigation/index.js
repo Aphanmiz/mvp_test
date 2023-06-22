@@ -3,8 +3,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import TabNavigator from "./TabNavigator";
 import Home from "../screens/Home";
-import Journal from "../screens/Journal";
+import Journal from "../screens/JournalCreate";
 import Onboard from "../onboard/Onboard";
+import SignUp from "../screens/SingUp";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,11 +15,11 @@ const Navigator = () => {
       <Stack.Navigator
         screenOptions={{ headerStyle: { backgroundColor: "whitesmoke" } }}
       >
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Onboard"
           component={Onboard}
           options={{ headerShown: false }}
-        />
+        />  */}
         <Stack.Screen
           name="Home"
           component={TabNavigator}

@@ -1,6 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../screens/Home";
 import Setting from "../screens/Setting";
+import JournalCreate from "../screens/JournalCreate";
+import Actoon from "../screens/Actoon";
 
 import { Ionicons, Entypo } from "@expo/vector-icons";
 
@@ -15,7 +17,7 @@ const TabNavigator = () => {
         headerShown: false
       }}
       tabBarOptions={{
-        activeTintColor: '#8222F8', // Set the active tab icon color
+        activeTintColor: '#8222F8',
       }}
     >
       <Tab.Screen
@@ -27,6 +29,24 @@ const TabNavigator = () => {
           ),
         }}
       />
+      <Tab.Screen
+        name="Realization"
+        component={JournalCreate}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="bulb-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      {/* <Tab.Screen
+        name="Actoon"
+        component={Actoon}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="bulb-outline" size={size} color={color} />
+          ),
+        }}
+      /> */}
       <Tab.Screen
         name="Setting"
         component={Setting}
