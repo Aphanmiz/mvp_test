@@ -5,7 +5,6 @@ import TabNavigator from "./TabNavigator";
 import Home from "../screens/Home";
 import Journal from "../screens/JournalCreate";
 import Onboard from "../onboard/Onboard";
-import SignUp from "../screens/SingUp";
 
 const Stack = createNativeStackNavigator();
 

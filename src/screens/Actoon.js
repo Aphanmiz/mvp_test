@@ -1,21 +1,31 @@
-import React from 'react';
-import { View, Image, StyleSheet, ScrollView, Dimensions} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Image, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { Storage } from 'aws-amplify';
 
 const Actoon = () => {
+  const [file, setFile] = useState(null);
+  useEffect(() => {
+    const fetchFile = async () => {
+      try {
+        const fetchedFile = await Storage.get("comics_1.png", {
+          level: "public"
+        });
+        console.log("File retrieved:", fetchedFile);
+        setFile(fetchedFile);
+      } catch (error) {
+        console.error("An error occurred while retrieving the file:", error);
+      }
+    };
+
+    fetchFile();
+  }, []);
+
   return (
-    // <View style={styles.container}>
-    <View style={styles.container}> 
-        <ScrollView centerContent={true} // To make the image centered in the scrollview
-    >
-      <Image
-        source={require('../../assets/images/img1@3x.png')} // Replace with the actual path to your image
-        style={styles.image}
-      />
-      <Image
-        source={require('../../assets/images/img2@3x.png')} // Replace with the actual path to your image
-        style={styles.image}
-      />
-    </ScrollView>
+    <View style={styles.container}>
+      <ScrollView centerContent={true} // To make the image centered in the scrollview
+      >
+     {file ? <Image source={{ uri: file }} style={styles.image} /> : null}
+      </ScrollView>
     </View>
     /* </View> */
   );
@@ -29,10 +39,11 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   image: {
-    resizeMode: "contain", 
-    width: Dimensions.get('window').width, 
+    resizeMode: "contain",
+    width: Dimensions.get('window').width,
     height: Dimensions.get('window').height
   },
 });
 
 export default Actoon;
+

@@ -1,0 +1,14 @@
+{
+  "resourceName": "s3mvptest1",
+  "bucketName": "mvp-test-1",
+  "policyUUID": "92488d7c",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "READ",
+    "CREATE_AND_UPDATE",
+    "DELETE"
+  ]
+}

@@ -17,12 +17,8 @@
     "emailVerificationSubject": "Your verification code",
     "emailVerificationMessage": "Your verification code is {####}",
     "defaultPasswordPolicy": false,
-    "passwordPolicyMinLength": 7,
-    "passwordPolicyCharacters": [
-      "Requires Lowercase",
-      "Requires Numbers",
-      "Requires Uppercase"
-    ],
+    "passwordPolicyMinLength": 8,
+    "passwordPolicyCharacters": [],
     "requiredAttributes": [
       "email"
     ],
@@ -36,7 +32,7 @@
     "sharedId": "784fd8f1",
     "resourceName": "mvptest784fd8f1",
     "authSelections": "identityPoolAndUserPool",
-    "useDefault": "manual",
+    "useDefault": "default",
     "usernameAttributes": [
       "email"
     ],
@@ -60,8 +56,7 @@
     "dependsOn": [],
     "userPoolGroups": false,
     "adminQueries": false,
-    "thirdPartyAuth": false,
-    "authProviders": [],
-    "hostedUI": false
+    "hostedUI": false,
+    "authProviders": []
   }
 }

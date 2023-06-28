@@ -1,4 +1,28 @@
 {
+  "analytics": {},
+  "api": {
+    "mvptest": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 30,
+              "description": "api key description"
+            },
+            "authenticationType": "API_KEY"
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
   "auth": {
     "mvptest784fd8f1": {
       "customAuth": false,
@@ -9,12 +33,8 @@
           "SMS"
         ],
         "passwordProtectionSettings": {
-          "passwordPolicyCharacters": [
-            "REQUIRES_LOWERCASE",
-            "REQUIRES_NUMBERS",
-            "REQUIRES_UPPERCASE"
-          ],
-          "passwordPolicyMinLength": 7
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
         },
         "signupAttributes": [
           "EMAIL"
@@ -29,6 +49,38 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "Cognito"
+    }
+  },
+  "function": {
+    "S3Triggered6d3e8c": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_S3Triggered6d3e8c_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "S3Triggered6d3e8c"
+        }
+      ]
+    },
+    "AMPLIFY_function_S3Triggered6d3e8c_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "S3Triggered6d3e8c"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "s3mvptest1": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
     }
   }
 }

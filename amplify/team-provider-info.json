@@ -14,6 +14,19 @@
     "categories": {
       "auth": {
         "mvptest784fd8f1": {}
+      },
+      "function": {
+        "S3Triggered6d3e8c": {
+          "deploymentBucketName": "amplify-mvptest-staging-155410-deployment",
+          "s3Key": "amplify-builds/S3Triggered6d3e8c-526d6c794d466f4c4f70-build.zip"
+        }
+      },
+      "storage": {
+        "photocomics": {},
+        "s3mvptest1": {}
+      },
+      "api": {
+        "mvptest": {}
       }
     }
   }

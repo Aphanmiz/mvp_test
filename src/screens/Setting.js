@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Image, Button, Linking, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Image, Button, Linking, StyleSheet, SafeAreaView, Pressable } from 'react-native';
 // import CustomButton from '../components/CustomButton';
 import { Auth } from 'aws-amplify';
 
@@ -7,6 +7,7 @@ const Setting = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [birthdate, setBirthday] = useState('');
   const [avatar, setAvatar] = useState('');
 
   useEffect(() => {
@@ -19,6 +20,7 @@ const Setting = () => {
       setName(user.attributes.name);
       setEmail(user.attributes.email);
       setPhone(user.attributes.phone_number);
+      setBirthday(user.attributes.birthdate);
       // You can fetch the avatar picture URL from your backend and set the 'avatar' state accordingly
     } catch (error) {
       console.log('Error fetching user data:', error);
@@ -44,10 +46,10 @@ const Setting = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Hi!</Text>
       <View>
-        <Text style={styles.label}>Name:</Text>
+        <Text style={styles.label}>Name</Text>
         <TextInput
           value={name}
           onChangeText={(text) => setName(text)}
@@ -55,7 +57,7 @@ const Setting = () => {
         />
       </View>
       <View>
-        <Text style={styles.label}>Email:</Text>
+        <Text style={styles.label}>Email</Text>
         <TextInput
           value={email}
           onChangeText={(text) => setEmail(text)}
@@ -64,7 +66,16 @@ const Setting = () => {
         />
       </View>
       <View>
-        <Text style={styles.label}>Phone:</Text>
+        <Text style={styles.label}>Birthday</Text>
+        <TextInput
+          value={birthdate}
+          onChangeText={(text) => setBirthday(text)}
+          keyboardType="birthday"
+          style={styles.input}
+        />
+      </View>
+      <View>
+        <Text style={styles.label}>Phone</Text>
         <TextInput
           value={phone}
           onChangeText={(text) => setPhone(text)}
@@ -72,19 +83,21 @@ const Setting = () => {
           style={styles.input}
         />
       </View>
-      <View style={styles.buttonContainer}>
-        <Button
-            title="Q&A"
-            onPress={handleQALink} color="#8222F8"
-          />
+      <View style={styles.buttonView}>
+          <Pressable
+            style={styles.button}
+            onPress={handleQALink}
+          >
+            <Text style={styles.textStyle}>Q&A</Text>
+          </Pressable>
+          <Pressable
+            style={styles.button}
+            onPress={handleLogout}
+          >
+            <Text style={styles.textStyle}>Logout</Text>
+          </Pressable>
       </View>
-      <View style={styles.buttonContainer}>
-      <Button
-            title="Logout"
-            onPress={handleLogout} color="#8222F8"
-          />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -93,9 +106,8 @@ export default Setting;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'top',
-    margin:"10%",
-    marginTop:"5%",
+    margin: "10%",
+    marginTop: "18%",
 
   },
   input: {
@@ -107,12 +119,21 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: '#C4C4C4',
   },
-  buttonContainer: {
+  button: {
+    margin:10,
     marginBottom: 20,
-    paddingTop: 5,
-    paddingBottom: 5,
-    // width: "60%",
-    // alignSelf: 'center',
+    padding:5,
+    backgroundColor: '#8222F8',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    margin: 10,
+    width: "45%",
+  },
+  buttonView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     fontSize: 24,
@@ -125,5 +146,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
     color: '#000000',
+  },
+  textStyle: {
+    color: 'white',
+    textAlign: 'center',
   },
 });
