@@ -13,4 +13,3 @@ type Journal @model @auth(rules: [{allow: public}]) {
   afternoonText: String
   nightText: String
 }
- 

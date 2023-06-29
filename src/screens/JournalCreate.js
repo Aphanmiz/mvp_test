@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, SafeAreaView, Pressable, Alert, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView, SafeAreaView, Pressable, Alert, Image, KeyboardAvoidingView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Storage, DataStore } from 'aws-amplify';
 import { Journal } from '../models';
+
 
 
 const JournalCreate = () => {
@@ -12,29 +13,68 @@ const JournalCreate = () => {
   const [morningText, setMorningText] = useState('');
   const [afternoonText, setAfternoonText] = useState('');
   const [nightText, setNightText] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImages, setSelectedImages] = useState(null);
 
   const handleChoosePicture = async () => {
     try {
-      const image = await ImagePicker.launchImageLibraryAsync(); // Use an image picker library like Expo ImagePicker
-      if (!image.canceled) {
+      const images = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsMultipleSelection: true,
+        maxSelected: 9,
+      }); // Use an image picker library like Expo ImagePicker
+      if (!images.canceled) {
         // Upload the chosen image to AWS S3
-        setSelectedImage(image.assets[0].uri);
+        const selectedImages = images.assets.slice(0, 9).map((asset) => asset.uri);
+        setSelectedImages(selectedImages);
         console.log('Picture choosing successfully');
+        console.log(images)
+        // console.log(selectedImages)
       }
     } catch (error) {
       console.log('Error choosing picture:', error);
     }
   };
   const uploadPicture = async (uri) => {
-    const fileName = `journal_pics/${Date.now()}.jpeg`; // Set a unique file name or key
-    try {
-      await Storage.put(fileName, uri, {
-        level: 'public',
-        contentType: 'image/jpeg',
-      });
-    } catch (error) {
-      console.log('Error uploading picture:', error);
+    console.log(uri)
+    for (let i = 0; i < uri.length; i++) {
+      const fileName = `journal_pics/${Date.now()}`; // Set a unique file name or key
+      try {
+        const response = await fetch(uri[i]);
+        const blob = await response.blob();
+        let fileExtension = "";
+        // To solve the corrupted images issues using fetch & blob
+        
+        if (uri[i].startsWith("data:image/")){
+          let startIndex = uri[i].indexOf("/") + 1; // Get index after "/"
+          let endIndex = uri[i].indexOf(";"); // Get index before ";"
+          fileExtension = uri[i].substring(startIndex, endIndex);
+        } 
+        
+        if (uri[i].startsWith("file://")){
+          fileExtension = uri[i].match(/\.(\w+)$/)?.[1];
+        }
+        console.log(fileExtension)
+        await Storage.put(`${fileName}.${fileExtension}`, blob, {
+          level: 'public',
+          contentType: `image/${fileExtension}`,
+        });
+        console.log('Success: Image uploaded:', fileName);
+      } catch (error) {
+        console.log('Error uploading picture:', error);
+      }
+    }
+  };
+
+  const getMimeType = (extension) => {
+    switch (extension.toLowerCase()) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      // add more cases as needed
+      default:
+        return 'image/jpeg'; // default case if extension is not matched
     }
   };
 
@@ -51,7 +91,7 @@ const JournalCreate = () => {
       await DataStore.save(
         new Journal(journalEntry)
       );
-      await uploadPicture(selectedImage);
+      await uploadPicture(selectedImages);
       console.log('Journal entry submitted successfully');
       setDate(new Date().toISOString().split('T')[0]);
       setTitle('');
@@ -59,7 +99,7 @@ const JournalCreate = () => {
       setMorningText('');
       setAfternoonText('');
       setNightText('');
-      setSelectedImage(null);
+      setSelectedImages(null);
       Alert.alert(
         "🎉 You did it !", // Alert title
         "Memory added", // Alert message
@@ -72,9 +112,23 @@ const JournalCreate = () => {
     }
   };
 
-
+  const ImageGallery = ({ images }) => {
+    return (
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+        {images.map((uri, index) => (
+          <Image
+            key={index}
+            source={{ uri }}
+            style={{ width: 100, height: 100, margin: 5 }}
+          />
+        ))}
+      </View>
+    );
+  };
+  
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <ScrollView>
         <View style={styles.container}>
           <Text style={styles.title}>How is  today?</Text>
@@ -82,14 +136,19 @@ const JournalCreate = () => {
             <Pressable
               style={styles.button}
               onPress={handleChoosePicture}>
-              <Text style={styles.textStyle}>Upload Photos</Text>
+              <Text style={styles.textStyle}>Upload Photos (Max 9) </Text>
             </Pressable>
           </View>
-          {selectedImage && (
+          {/* {selectedImage && (
             <View style={styles.selectedImageContainer}>
               <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
             </View>
-          )}
+          )} */}
+          {selectedImages && 
+          <View>
+          <ImageGallery images={selectedImages} />
+          </View>
+          }
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Date *:</Text>
             <TextInput
@@ -154,6 +213,7 @@ const JournalCreate = () => {
           </View>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

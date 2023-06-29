@@ -13,6 +13,7 @@ const Tab = createMaterialTopTabNavigator();
 const Home = () => {
   const [memoryVisible, setMemoryVisible] = useState(false);
   const [actoonVisible, setActoonVisible] = useState(false);
+  const [selected, setSelected] = useState('');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -21,9 +22,19 @@ const Home = () => {
           arrowColor: '#8222F8',
           todayTextColor: '#8222F8',
           calendarBackground: '#F0F0F0',
+          selectedDayBackgroundColor: '#8222F8',
+          selectedDayTextColor: '#ffffff',
+          textDisabledColor: '#b6c1cd',
         }}
         enableSwipeMonths={true}
         showWeekNumbers={true}
+        onDayPress={day => {
+          setSelected(day.dateString);
+          console.log(selected);
+        }}
+        markedDates={{
+          [selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
+        }}
       />
       <View style={styles.buttonView}>
         <Pressable
@@ -49,7 +60,7 @@ const Home = () => {
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <JournalEdit />
+            <JournalEdit selectedDate={selected} />
             <View style={styles.buttonView}>
               <Pressable
                 onPress={() => setMemoryVisible(!memoryVisible)}>

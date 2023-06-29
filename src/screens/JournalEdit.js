@@ -4,34 +4,47 @@ import * as ImagePicker from 'expo-image-picker';
 import {  Storage, DataStore } from 'aws-amplify';
 import { Journal } from '../models';
 
-const JournalEdit = () => {
-  const [date, setDate] = useState(new Date().toDateString());
+const JournalEdit = ({selectedDate}) => {
+  console.log(selectedDate)
+  const [date, setDate] = useState(selectedDate);
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState('');
   const [morningText, setMorningText] = useState('');
   const [afternoonText, setAfternoonText] = useState('');
   const [nightText, setNightText] = useState('');
+
+
   useEffect(() => {
-    fetchJournalEntry();
+    fetchJournalEntry(selectedDate);
   }, []);
 
-  const fetchJournalEntry = async () => {
+  const fetchJournalEntry = async (selectedDate) => {
     try {
-      const journalEntries = await DataStore.query(Journal);
+      const journalEntries = await DataStore.query(Journal, (c) => c.date.eq(selectedDate));
       if (journalEntries.length > 0) {
-        const latestEntry = journalEntries[journalEntries.length - 1];
-        setDate(latestEntry.date);
-        setTitle(latestEntry.title);
-        setTags(latestEntry.tags);
-        setMorningText(latestEntry.morningText);
-        setAfternoonText(latestEntry.afternoonText);
-        setNightText(latestEntry.nightText);
+        const journalEntry = journalEntries[0];
+        setDate(journalEntry.date);
+        setTitle(journalEntry.title);
+        setTags(journalEntry.tags);
+        setMorningText(journalEntry.morningText);
+        setAfternoonText(journalEntry.afternoonText);
+        setNightText(journalEntry.nightText);
+      }
+      // no entry doesn't work
+      if (journalEntries.length < 0)  {
+        Alert.alert(
+          "You didn't write anything !", // Alert title
+          "Do you want to add some?", // Alert message
+          [
+            { text: "OK" } // Button
+          ]
+        );
       }
     } catch (error) {
       console.error('Error fetching journal entry', error);
     }
   };
-  
+
   const handleChoosePicture = async () => {
     try {
       const image = await ImagePicker.launchImageLibraryAsync(); // Use an image picker library like Expo ImagePicker
@@ -55,7 +68,6 @@ const JournalEdit = () => {
       console.log('Error uploading picture:', error);
     }
   }; 
-  
 
 
   const handleUpdate = () => {
@@ -81,7 +93,7 @@ const JournalEdit = () => {
               onPress={handleChoosePicture}>
               <Text style={styles.textStyle}>Upload Photos</Text>
             </Pressable>
-          </View>
+        </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Date:</Text>
           <TextInput

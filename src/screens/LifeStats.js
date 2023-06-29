@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native';
+import { Auth } from 'aws-amplify';
 
 const MatrixItem = ({ item }) => (
     <View style={styles.calendar_item}>
@@ -7,11 +8,23 @@ const MatrixItem = ({ item }) => (
     </View>
 );
 
-
-
 const LifeStats = () => {
     // Assuming the user's birthday is provided as a JavaScript Date object
-    const birthday = new Date('2002-08-12');
+    const [birthday, setBirthday] = useState(new Date());
+
+    useEffect(() => {
+        fetchUserData();
+    }, []);
+    
+    const fetchUserData = async () => {
+        try {
+          const user = await Auth.currentAuthenticatedUser();
+          setBirthday(new Date(user.attributes.birthdate));
+          // You can fetch the avatar picture URL from your backend and set the 'avatar' state accordingly
+        } catch (error) {
+          console.log('Error fetching user data:', error);
+        }
+    };
     const birthMonth = birthday.getMonth()
 
     // Calculate the number of days since the user's birthday
@@ -98,8 +111,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingBottom: 20,
-        margin: "10%",
+        marginLeft: "7%",
+        marginRight: "6%",
         marginTop: "3%",
+        // marginBottom: "3%",
     },
     header: {
         fontSize: 20,
