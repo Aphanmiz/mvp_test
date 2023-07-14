@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// import UserContext from '../context/UserContext'; 
 import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native';
 import { Auth } from 'aws-amplify';
 
@@ -10,7 +11,7 @@ const MatrixItem = ({ item }) => (
 
 const LifeStats = () => {
     // Assuming the user's birthday is provided as a JavaScript Date object
-    const [birthday, setBirthday] = useState(new Date());
+    const [birthdate, setBirthday]= useState(new Date());
 
     useEffect(() => {
         fetchUserData();
@@ -25,11 +26,11 @@ const LifeStats = () => {
           console.log('Error fetching user data:', error);
         }
     };
-    const birthMonth = birthday.getMonth()
+    const birthMonth = birthdate.getMonth()
 
     // Calculate the number of days since the user's birthday
     const currentDate = new Date();
-    const timeDifference = currentDate.getTime() - birthday.getTime();
+    const timeDifference = currentDate.getTime() - birthdate.getTime();
     const daysSinceBirthday = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
     const weeksSinceBirthday = Math.floor(daysSinceBirthday / 7);
     const monthsSinceBirthday = Math.floor(daysSinceBirthday / 30.44);
@@ -71,6 +72,7 @@ const LifeStats = () => {
                     ))}
                 </View>
                 <FlatList
+                    style={styles.matrixGrid}
                     data={life_calendar}
                     renderItem={MatrixItem}
                     numColumns={12}
@@ -164,5 +166,9 @@ const styles = StyleSheet.create({
     },
     matrix: {
         flexDirection: 'row',
-      },
+        width: '100%',
+    },
+    matrixContainer: {
+        width: '98%',
+    }
 });

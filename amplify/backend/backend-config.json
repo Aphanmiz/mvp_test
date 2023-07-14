@@ -1,5 +1,10 @@
 {
-  "analytics": {},
+  "analytics": {
+    "mvptest": {
+      "providerPlugin": "awscloudformation",
+      "service": "Pinpoint"
+    }
+  },
   "api": {
     "mvptest": {
       "dependsOn": [],

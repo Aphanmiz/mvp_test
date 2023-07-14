@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Image, Button, Linking, StyleSheet, SafeAreaView, Pressable } from 'react-native';
-// import CustomButton from '../components/CustomButton';
+// import UserContext from '../context/UserContext'; 
+import { View, Text, TextInput, Alert, Linking, StyleSheet, SafeAreaView, Pressable, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
 import { Auth } from 'aws-amplify';
 
 const Setting = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [birthdate, setBirthday] = useState('');
-  const [avatar, setAvatar] = useState('');
+  const [birthdate, setBirthday]= useState(new Date());
+  // const [avatar, setAvatar] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     fetchUserData();
@@ -45,13 +47,77 @@ const Setting = () => {
     }
   };
 
+  const handleUpdate = async () => {
+    if (isEditing) {
+      try {
+        const user = await Auth.currentAuthenticatedUser();
+        await Auth.updateUserAttributes(user, {
+          'name': name,
+          'email': email,
+          'phone_number': phone,
+          'birthdate': birthdate,
+          // 'picture': avatar,  // Uncomment and edit this line if you have a mechanism for handling avatar updates
+        });
+        fetchUserData();
+        console.log('User setting changed successfully');
+        Alert.alert(
+          "👌 Update done", // Alert title
+          "", // Alert message
+          [
+            { text: "Ok" } // Button
+          ]
+        );
+        setIsEditing(false);
+        console.log('new birthdate:');
+      } catch (error) {
+        console.log('Error updating user attributes:', error);
+        Alert.alert(
+          "❗️ Update failed", // Alert title
+          "", // Alert message
+          [
+            { text: "Ok" } // Button
+          ]
+        );
+      }
+    }else{
+      Alert.alert(
+        "Nothing changed", // Alert title
+        "", // Alert message
+        [
+          { text: "Ok" } // Button
+        ]
+      );
+    }
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    Alert.alert(
+      "⚠️ Want to edit your info?", // Alert title
+      "Click on input to edit", // Alert message
+      [
+        { text: "Ok" } // Button
+      ]
+    );
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Hi!</Text>
+    
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <SafeAreaView style={styles.container}>
+      <View style={styles.titleRow}>
+        <Text style={styles.title}>Hi!</Text>
+        <Pressable
+          onPress={handleEdit}
+        >
+          <Ionicons name="create-outline" size={30} color="#8222F8" />
+        </Pressable>
+      </View>
       <View>
         <Text style={styles.label}>Name</Text>
         <TextInput
           value={name}
+          editable={isEditing}
           onChangeText={(text) => setName(text)}
           style={styles.input}
         />
@@ -60,6 +126,7 @@ const Setting = () => {
         <Text style={styles.label}>Email</Text>
         <TextInput
           value={email}
+          editable={isEditing}
           onChangeText={(text) => setEmail(text)}
           keyboardType="email-address"
           style={styles.input}
@@ -69,6 +136,7 @@ const Setting = () => {
         <Text style={styles.label}>Birthday</Text>
         <TextInput
           value={birthdate}
+          editable={isEditing}
           onChangeText={(text) => setBirthday(text)}
           keyboardType="birthday"
           style={styles.input}
@@ -78,26 +146,36 @@ const Setting = () => {
         <Text style={styles.label}>Phone</Text>
         <TextInput
           value={phone}
+          editable={isEditing}
           onChangeText={(text) => setPhone(text)}
           keyboardType="phone-pad"
           style={styles.input}
         />
       </View>
       <View style={styles.buttonView}>
-          <Pressable
-            style={styles.button}
-            onPress={handleQALink}
-          >
-            <Text style={styles.textStyle}>Q&A</Text>
-          </Pressable>
-          <Pressable
-            style={styles.button}
-            onPress={handleLogout}
-          >
-            <Text style={styles.textStyle}>Logout</Text>
-          </Pressable>
+      
+        <Pressable
+          onPress={handleUpdate}
+          style={styles.button}
+        >
+          <Text style={styles.textStyle}>Update</Text>
+        </Pressable>
+        <Pressable
+          style={styles.button}
+          onPress={handleLogout}
+        >
+          <Text style={styles.textStyle}>Logout</Text>
+        </Pressable>
+        <Pressable
+          style={styles.button}
+          onPress={handleQALink}
+        >
+          <Text style={styles.textStyle}>Q&A</Text>
+        </Pressable>
       </View>
-    </SafeAreaView>
+      </SafeAreaView>
+      </TouchableWithoutFeedback>
+    
   );
 };
 
@@ -110,6 +188,12 @@ const styles = StyleSheet.create({
     marginTop: "18%",
 
   },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'top',
+    marginBottom: 20,
+  },
   input: {
     height: 40,
     borderColor: 'gray',
@@ -120,15 +204,15 @@ const styles = StyleSheet.create({
     borderColor: '#C4C4C4',
   },
   button: {
-    margin:10,
+    margin: 10,
     marginBottom: 20,
-    padding:5,
+    padding: 5,
     backgroundColor: '#8222F8',
     borderRadius: 20,
     padding: 10,
     elevation: 2,
     margin: 10,
-    width: "45%",
+    width: "30%",
   },
   buttonView: {
     flexDirection: 'row',
@@ -138,7 +222,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
     color: '#000000',
   },
   label: {

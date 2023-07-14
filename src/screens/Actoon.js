@@ -3,28 +3,34 @@ import { View, Image, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { Storage } from 'aws-amplify';
 
 const Actoon = () => {
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
+
   useEffect(() => {
-    const fetchFile = async () => {
+    const fileList = ['comics_1.png', 'comics_2.png'];
+
+    const fetchFiles = async () => {
       try {
-        const fetchedFile = await Storage.get("comics_1.png", {
-          level: "public"
-        });
-        console.log("File retrieved:", fetchedFile);
-        setFile(fetchedFile);
+        const fetchedFiles = await Promise.all(
+          fileList.map(file =>
+            Storage.get(file, { level: 'public' })
+          )
+        );
+        console.log("File retrieved:", fetchedFiles);
+        setFiles(fetchedFiles);
       } catch (error) {
         console.error("An error occurred while retrieving the file:", error);
       }
     };
 
-    fetchFile();
+    fetchFiles();
   }, []);
 
   return (
     <View style={styles.container}>
-      <ScrollView centerContent={true} // To make the image centered in the scrollview
-      >
-     {file ? <Image source={{ uri: file }} style={styles.image} /> : null}
+      <ScrollView centerContent={true}>
+      {files.map((file, index) => (
+          <Image key={index} source={{ uri: file }} style={styles.image} />
+        ))}
       </ScrollView>
     </View>
     /* </View> */
@@ -34,14 +40,14 @@ const Actoon = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'top',
-    alignItems: 'center',
-    marginTop: 30,
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
   },
   image: {
-    resizeMode: "contain",
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height
+    resizeMode: "cover",
+    width: '100%',
+    height: Dimensions.get('window').height,
+    marginVertical: 0,
   },
 });
 

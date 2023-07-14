@@ -4,7 +4,7 @@ import Setting from "../screens/Setting";
 import JournalCreate from "../screens/JournalCreate";
 import Actoon from "../screens/Actoon";
 
-import { Ionicons, Entypo } from "@expo/vector-icons";
+import { Ionicons} from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
@@ -38,15 +38,6 @@ const TabNavigator = () => {
           ),
         }}
       />
-      {/* <Tab.Screen
-        name="Actoon"
-        component={Actoon}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="bulb-outline" size={size} color={color} />
-          ),
-        }}
-      /> */}
       <Tab.Screen
         name="Setting"
         component={Setting}

@@ -1,19 +1,16 @@
-import React, { useState } from 'react';
-import { View, Text, SafeAreaView, Modal, StyleSheet, Alert, Pressable, ScrollView } from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React, { useState} from 'react';
+import { View, Text, SafeAreaView, Modal, StyleSheet, Alert, Pressable } from 'react-native';
+import { Calendar} from 'react-native-calendars';
+
+// import CalendarComponent from '../components/CalendarComponent';
 import JournalEdit from './JournalEdit';
 import Actoon from './Actoon';
 import LifeStats from './LifeStats';
 
-const Tab = createMaterialTopTabNavigator();
-
-
 const Home = () => {
   const [memoryVisible, setMemoryVisible] = useState(false);
   const [actoonVisible, setActoonVisible] = useState(false);
-  const [selected, setSelected] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -22,18 +19,20 @@ const Home = () => {
           arrowColor: '#8222F8',
           todayTextColor: '#8222F8',
           calendarBackground: '#F0F0F0',
-          selectedDayBackgroundColor: '#8222F8',
-          selectedDayTextColor: '#ffffff',
           textDisabledColor: '#b6c1cd',
         }}
         enableSwipeMonths={true}
         showWeekNumbers={true}
         onDayPress={day => {
-          setSelected(day.dateString);
-          console.log(selected);
+          setSelectedDate(day.dateString);
+          console.log(selectedDate);
         }}
         markedDates={{
-          [selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
+          [selectedDate]: {
+            selected: true, 
+            selectedColor: '#8222F8',
+            selectedTextColor: '#ffffff',
+          }
         }}
       />
       <View style={styles.buttonView}>
@@ -60,7 +59,7 @@ const Home = () => {
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <JournalEdit selectedDate={selected} />
+            <JournalEdit selectedDate={selectedDate} />
             <View style={styles.buttonView}>
               <Pressable
                 onPress={() => setMemoryVisible(!memoryVisible)}>
@@ -125,7 +124,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: '100%',
-    padding: "5%",
+    paddingBottom:"5%",
+    paddingTop: 0,
+    // padding: "5%",
   },
   button: {
     borderRadius: 20,
@@ -180,15 +181,3 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
-
-
-// onDayPress={day => {
-//   console.log('selected day', day);
-// }}
-// onMonthChange={month => {
-//   console.log('month changed', month);
-// }}
-// renderArrow={direction => <Arrow />}
-// onPressArrowLeft={subtractMonth => subtractMonth()}
-// // Handler which gets executed when press arrow icon right. It receive a callback can go next month
-// onPressArrowRight={addMonth => addMonth()}

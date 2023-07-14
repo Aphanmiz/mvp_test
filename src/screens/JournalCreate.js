@@ -91,7 +91,10 @@ const JournalCreate = () => {
       await DataStore.save(
         new Journal(journalEntry)
       );
-      await uploadPicture(selectedImages);
+      if (selectedImages!= null) {
+        console.log(selectedImages);
+        await uploadPicture(selectedImages);
+      }
       console.log('Journal entry submitted successfully');
       setDate(new Date().toISOString().split('T')[0]);
       setTitle('');

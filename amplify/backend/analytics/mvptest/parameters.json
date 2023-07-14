@@ -1,0 +1,21 @@
+{
+    "appName": "mvptest",
+    "roleName": "pinpointLambdaRole7adf578c",
+    "cloudformationPolicyName": "cloudformationPolicy7adf578c",
+    "cloudWatchPolicyName": "cloudWatchPolicy7adf578c",
+    "pinpointPolicyName": "pinpointPolicy7adf578c",
+    "authPolicyName": "pinpoint_amplify_7adf578c",
+    "unauthPolicyName": "pinpoint_amplify_7adf578c",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    }
+}

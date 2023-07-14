@@ -12,11 +12,11 @@ const JournalEdit = ({selectedDate}) => {
   const [morningText, setMorningText] = useState('');
   const [afternoonText, setAfternoonText] = useState('');
   const [nightText, setNightText] = useState('');
-
+  const [journal, setJournal] = useState(null);
 
   useEffect(() => {
     fetchJournalEntry(selectedDate);
-  }, []);
+  }, [selectedDate]);
 
   const fetchJournalEntry = async (selectedDate) => {
     try {
@@ -29,8 +29,10 @@ const JournalEdit = ({selectedDate}) => {
         setMorningText(journalEntry.morningText);
         setAfternoonText(journalEntry.afternoonText);
         setNightText(journalEntry.nightText);
+        setJournal(journalEntry);
       }
       // no entry doesn't work
+      console.log(journalEntries)
       if (journalEntries.length < 0)  {
         Alert.alert(
           "You didn't write anything !", // Alert title
@@ -70,17 +72,49 @@ const JournalEdit = ({selectedDate}) => {
   }; 
 
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     // Handle submission logic here
     // You can save the journal entry or perform any other action
-    console.log('Journal entry edited');
-    Alert.alert(
-      "👏 Awesome !", // Alert title
-      "Memory updated", // Alert message
-      [
-        { text: "OK" } // Button
-      ]
-    );
+    if (journal){
+      try{
+        await DataStore.save(
+          Journal.copyOf(journal, updated => {
+            updated.title = title;
+            updated.tags = tags;
+            updated.morningText = morningText;
+            updated.afternoonText = afternoonText;
+            updated.nightText = nightText;
+          })
+        );
+
+        console.log('Update success');
+        Alert.alert(
+          "👏 Awesome !", // Alert title
+          "Memory updated", // Alert message
+          [
+            { text: "OK" } // Button
+          ]
+        );
+      } catch (error) {
+        console.error('Error updating journal entry', error);
+        Alert.alert(
+          "😢 Oh no !", // Alert title
+          "Something went wrong, please try again", // Alert message
+          [
+            { text: "OK" } // Button
+          ]
+        );
+      }
+    } else {
+      console.log('No journal entry to update');
+      Alert.alert(
+        "💡 You didn't make any changes!", // Alert title
+        "", // Alert message
+        [
+          { text: "OK" } // Button
+        ]
+      );
+    }
   };
 
   return (
@@ -166,7 +200,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    margin: "5%",
+    margin: "10%",
   },
   title: {
     fontSize: 24,
